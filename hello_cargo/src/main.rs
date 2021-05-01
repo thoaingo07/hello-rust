@@ -1,22 +1,35 @@
-// TODO: modify only this function.
-fn copy_and_return<'a>(vector: &'a mut Vec<String>, value: &'a str) -> &'a str{
-    vector.push(String::from(value));
-    value
+trait Area {
+    fn area(&self) -> f64;
+}
+struct Circle {
+    radius: f64,
 }
 
-fn main() {
-    let name1 = "Joe";
-    let name2 = "Chris";
-    let name3 = "Anne";
+struct Rectangle {
+    width: f64,
+    height: f64,
+}
 
-    let mut names = Vec::new();
+impl Area for Circle {
+    fn area(&self) -> f64 {
+        use std::f64::consts::PI;
+        PI * self.radius.powf(2.0)
+    }
+}
 
-    assert_eq!("Joe", copy_and_return(&mut names, &name1));
-    assert_eq!("Chris", copy_and_return(&mut names, &name2));
-    assert_eq!("Anne", copy_and_return(&mut names, &name3));
+impl Area for Rectangle {
+    fn area(&self) -> f64 {
+        self.width * self.height
+    }
+}
 
-    assert_eq!(
-        names,
-        vec!["Joe".to_string(), "Chris".to_string(), "Anne".to_string()]
-    )
+fn main(){
+    let circle = Circle { radius: 5.0 };
+    let rectangle = Rectangle {
+        width: 10.0,
+        height: 20.0,
+    };
+
+    println!("Circle area: {}", circle.area());
+    println!("Rectangle area: {}", rectangle.area());
 }
