@@ -52,6 +52,7 @@ no_llvm_build
 /tmp/
 # Created by default with `src/ci/docker/run.sh`
 /obj/
+/debug/
 
 ## Temporary files
 *~
@@ -75,3 +76,4 @@ __pycache__/
 **package-lock.json
 
 # Before adding new lines, see the comment at the top.
+

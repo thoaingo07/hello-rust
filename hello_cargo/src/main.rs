@@ -1,69 +1,28 @@
-struct Groups<T> {
-    inner: Vec<T>,
+mod authentication;
+mod car_factory;
+mod text_processing;
+
+use regex::Regex;
+use text_processing::letters::count_letters;
+
+use text_processing::numbers::count_numbers;
+fn count_letters_and_numbers(text: &str) -> (usize, usize) {
+    let number_of_letters = count_letters(text);
+    let number_of_numbers = count_numbers(text);
+    (number_of_letters, number_of_numbers)
 }
-
-impl<T> Groups<T> {
-    fn new(inner: Vec<T>) -> Self {
-        Groups { inner }
-    }
-}
-
-impl<T: PartialEq> Iterator for Groups<T> {
-    type Item = Vec<T>;
-
-    fn next(&mut self) -> Option<Self::Item> {
-        // if the inner vector is empty, we are done
-        if self.inner.is_empty() {
-            return None;
-        }
-
-        // lets check the span of equal items
-        let mut cursor = 1;
-        let first = &self.inner[0];
-        for element in &self.inner[1..] {
-            if element == first {
-                cursor += 1;
-            } else {
-                break;
-            }
-        }
-
-        // we use the `Vec::drain` to extract items up until the cursor
-        let items = self.inner.drain(0..cursor).collect();
-
-        // return the extracted items
-        Some(items)
-    }
-}
-
 fn main() {
-    let data = vec![4, 1, 1, 2, 1, 3, 3, -2, -2, -2, 5, 5];
-    // groups:     |->|---->|->|->|--->|----------->|--->|
-    assert_eq!(
-        Groups::new(data).into_iter().collect::<Vec<Vec<_>>>(),
-        vec![
-            vec![4],
-            vec![1, 1],
-            vec![2],
-            vec![1],
-            vec![3, 3],
-            vec![-2, -2, -2],
-            vec![5, 5],
-        ]
-    );
 
-    let data2 = vec![1, 2, 2, 1, 1, 2, 2, 3, 4, 4, 3];
-    // groups:      |->|---->|---->|----|->|----->|->|
-    assert_eq!(
-        Groups::new(data2).into_iter().collect::<Vec<Vec<_>>>(),
-        vec![
-            vec![1],
-            vec![2, 2],
-            vec![1, 1],
-            vec![2, 2],
-            vec![3],
-            vec![4, 4],
-            vec![3],
-        ]
-    )
+    let user = authentication::User::new("jeremy", "super-secret");
+    car_factory::build_car();
+
+    println!("The username is: {}", user.get_username());
+    println!("The password is: {}", user.get_password_hash());
+    let re = Regex::new(r"^\d{4}-\d{2}-\d{2}$").unwrap();
+    println!("Did our date match? {}", re.is_match("2014-01-01"));
+
+    assert_eq!(count_letters_and_numbers("221B Baker Street"), (12, 3));
+    assert_eq!(count_letters_and_numbers("711 Maple Street"), (11, 3));
+    assert_eq!(count_letters_and_numbers("4 Privet Drive"), (11, 1));
+
 }
